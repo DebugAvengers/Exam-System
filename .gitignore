@@ -5,7 +5,3 @@
 *.sublime-workspace
 
 
-# Other temporary or generated files
-tmp/
-dist/
-build/
