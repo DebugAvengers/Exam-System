@@ -9,3 +9,7 @@
 tmp/
 dist/
 build/
+
+# Ignore Python virtual environments
+venv/
+.venv/
