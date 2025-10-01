@@ -1,0 +1,11 @@
+# Editor/IDE specific files
+.vscode/ # VS Code specific files
+.idea/   # PyCharm specific files
+*.sublime-project
+*.sublime-workspace
+
+
+# Other temporary or generated files
+tmp/
+dist/
+build/

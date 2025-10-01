@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Login</h2>
+<form method="POST" action="{{ url_for('login')}}">
+<label for="email">Email</label>
+<input
+    type="text"
+    id="email"
+    name="email"
+    placeholder="Enter email"
+    required
+    pattern="^[0-9]{10}@student\.csn\.edu$"
+    title="Enter your NSHE email"
+    >
+    <br>
+<label for="password">Password</label>
+<input type="password
+    id="password"
+    name="password"
+    placeholder="Enter password"
+    required
+    pattern="[0-9]{10}"
+    title="Enter your NSHE ID"
+    >
+    <br>
+<button type="submit">Login</button>
+</form>
+
+    
+{% endblock %}
