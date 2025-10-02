@@ -4,12 +4,9 @@ Flask-SQLAlchemy>=3.0
 python-dotenv>=1.0
 PyMySQL>=1.0
 Werkzeug>=2.0
-# optional (development)
-python-dotenv>=1.0
-
-# pinned extras you may find useful:
-# SQLAlchemy is a dependency of Flask-SQLAlchemy but pinning can help
 SQLAlchemy>=2.0
+cryptography>=3.4
 
-# Pin an exact pip-tools or testing libs only if you plan to use them
+# Optional / dev (uncomment if needed)
 # pytest>=7.0
+# pip-tools>=6.0

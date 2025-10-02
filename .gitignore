@@ -13,3 +13,7 @@ build/
 # Ignore Python virtual environments
 venv/
 .venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
