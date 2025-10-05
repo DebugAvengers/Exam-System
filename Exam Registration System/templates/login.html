@@ -2,6 +2,14 @@
 
 {% block content %}
 <h2>Login</h2>
+
+<!-- Login Reminder -->
+<p style="font-style: italic; color: gray;">
+    Reminder: Use your official CSN student credentials.<br>
+    <strong>Username:</strong> NSHEID@student.csn.edu<br>
+    <strong>Password:</strong> Your 10-digit NSHE ID number
+</p>
+
 <form method="POST" action="{{ url_for('login')}}">
 <label for="email">Email</label>
 <input
