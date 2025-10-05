@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Project</h1>
-<p>Welcome to the project</p>
+<div style="max-width: 700px; margin: 2rem auto; text-align: center; font-family: Arial, sans-serif;">
+    <h1>Welcome to the CSN Exam Registration System</h1>
+    <p>This system allows <strong>CSN students</strong> to register for upcoming exams securely and conveniently.</p>
+
+    <div style="margin-top: 2rem;">
+        <a href="{{ url_for('login') }}" 
+           style="padding: 10px 20px; background-color: #0066cc; color: white; border-radius: 6px; text-decoration: none;">
+           Login
+        </a>
+    </div>
+</div>
 {% endblock %}
