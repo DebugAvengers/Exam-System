@@ -8,9 +8,9 @@
 <body>
     <nav>
         <ul>
-            <li> <a href="/">Home</a></li>
-            <li> <a href="/register">Register</a></li>
-            <li> <a href="/login">Login</a></li>
+            <td> <a href="{{ url_for('home') }}">Home</a></td>
+            <td> <a href="{{ url_for('register_exam') }}">Exam Registration</a></td>
+            <td> <a href="{{ url_for('logout') }}">Logout</a></td>
         </ul>
     </nav>
 

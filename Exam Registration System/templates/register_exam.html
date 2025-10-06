@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Registration System</title>
+    <link rel="stylesheet" href="static\styles.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="user-info">
+            <strong>{{ current_user.FirstName }} {{ current_user.LastName }}</strong><br>
+            NSHE ID: {{ current_user.NSHEID }} | {{ current_user.email }}
+        </div>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+    <div class="container">
+        <h1>📝 Exam Registration</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="info-box">
+            <h3>📊 Your Registration Status</h3>
+            <p>Unique exams registered: <strong>{{ current_user.exam_count_check() }} / {{ max_unique_exams }}</strong></p>
+            <p>Remaining exam slots: <strong>{{ current_user.remaining_exams() }}</strong></p>
+            {% if registered_exams %}
+            <div>
+                <strong>Already registered for:</strong><br>
+                {% for exam in registered_exams %}
+                    <span class="exam-badge">{{ exam }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if current_user.exam_check() %}
+        <form method="POST" action="{{ url_for('register_exam') }}">
+            <div class="form-group">
+                <label for="exam_type">Exam Type:</label>
+                <select id="exam_type" name="exam_type" required>
+                    <option value="">-- Select Exam --</option>
+                    {% for exam in exam_types %}
+                        <option value="{{ exam }}">
+                            {{ exam }}
+                            {% if registered_exams and exam in registered_exams %}(Already registered){% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="time_slot">Time Slot:</label>
+                <select id="time_slot" name="time_slot" required>
+                    <option value="">-- Select Time --</option>
+                    {% for slot in time_slots %}
+                        <option value="{{ slot }}" {% if slot_counts[slot] >= max_capacity %}disabled{% endif %}>
+                            {{ slot }} 
+                            {% if slot_counts[slot] >= max_capacity %}
+                                (FULL)
+                            {% else %}
+                                ({{ max_capacity - slot_counts[slot] }} spots left)
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit">Register for Exam</button>
+        </form>
+        {% else %}
+        <div class="flash error">
+            You have reached the maximum of {{ max_unique_exams }} unique exam registrations.
+        </div>
+        {% endif %}
+        
+        <div class="my-registrations">
+            <h2>My Registrations</h2>
+            {% if my_registrations %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Exam Type</th>
+                        <th>Time Slot</th>
+                        <th>Registered On</th>
+                        <th>Cancel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reg in my_registrations %}
+                    <tr>
+                        <td>{{ reg.exam_type }}</td>
+                        <td>{{ reg.time_slot }}</td>
+                        <td>{{ reg.registered_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                        <form action="{{ url_for('cancel_registration') }}" method = "post">
+                            <input type="hidden" name="reg_id" value="{{ reg.id }}">
+                            <button type="submit" class="cancel-btn">Cancel</button>
+                        </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No registrations yet.</p>
+            {% endif %}
+        </div>
+        
+        {% if current_user.is_staff %}
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('view_all_registrations') }}" class="link-button">📋 View All Registrations (Staff)</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+{% endblock %}
