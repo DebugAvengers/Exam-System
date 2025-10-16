@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Registration System</title>
+    <link rel="stylesheet" href="static\styles.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="user-info">
+            <strong>{{ current_user.FirstName }} {{ current_user.LastName }}</strong><br>
+            NSHE ID: {{ current_user.NSHEID }} | {{ current_user.email }}
+        </div>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="time-slot-grid">
+        {% for value, label in time_slots_pairs %}
+            <div class="slot-card">
+                <div style="font-weight:600">{{ label }}</div>
+                <div style="font-size:12px; color:#666">{{ slot_counts[value] }} / {{ max_capacity }} registered</div>
+                {% if slot_counts[value] >= max_capacity %}
+                    <div style="color:#c00; margin-top:6px; font-weight:600">FULL</div>
+                {% else %}
+                    <div style="color:#080; margin-top:6px;">{{ max_capacity - slot_counts[value] }} spots left</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+<div class="container">
+    <h1>All Registrations</h1>
+    {% if registrations %}
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>NSHEID</th>
+                <th>Email</th>
+                <th>Exam</th>
+                <th>Time Slot</th>
+                <th>Registered On</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reg, first, last, email in registrations %}
+            <tr>
+                <td>{{ first }} {{ last }}</td>
+                <td>{{ reg.student.NSHEID }}</td>
+                <td>{{ email }}</td>
+                <td>{{ reg.exam_type }}</td>
+                <td>{{ time_slots_map.get(reg.time_slot, reg.time_slot) }}</td>
+                <td>{{ reg.registered_at.strftime('%m-%d-%Y') }}</td>
+                <td>
+                    <form action="{{ url_for('cancel_registration') }}" method="post">
+                        <input type="hidden" name="reg_id" value="{{ reg.id }}">
+                        <button type="submit" class="cancel-btn">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No registrations found.</p>
+    {% endif %}
+</div>
+</body>
+</html>
+
+{% endblock %}

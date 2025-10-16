@@ -71,7 +71,7 @@ def register_exam():
     exam_type = request.form.get('exam_type')
     time_slot = request.form.get('time_slot')
 
-    #
+    # These checks make sure the data is valid
     if not exam_type or not time_slot:
         flash('Please select both an exam type and time slot.', 'error')
         return redirect(url_for('register_exam'))
@@ -152,7 +152,10 @@ def cancel_registration():
         registration = Registration.query.get(reg_id)
         if not registration:
             flash('Registration not found.', 'danger')
-            return redirect(url_for('register_exam'))
+            if current_user.is_staff:
+                return redirect(url_for('staff_dashboard'))
+            else:
+                return redirect(url_for('register_exam'))
 
         # lets the user delete their own registration or lets staff delete any registration
         # if not allowed to rmove, flash error message
@@ -162,12 +165,75 @@ def cancel_registration():
             flash('Registration deleted successfully.', 'success')
         else:
             flash('Unauthorized to delete this registration.', 'danger')
-    return redirect(url_for('register_exam'))
 
-@app.route('/staff', methods = ['GET'])
-def dashboard():
-    return render_template('staff.html')
+        # I added this so that this function can be used by both staff and students
+        if current_user.is_staff:
+            return redirect(url_for('staff_dashboard'))
+        else:
+            return redirect(url_for('register_exam'))
+        
+
+@app.route('/staff_login', methods=['GET', 'POST'])
+def staff_login():
+    if current_user.is_authenticated and current_user.is_staff:
+        return redirect(url_for('staff_dashboard'))
+    
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        pattern = r'^[0-9]{10}@staff\.csn\.edu$'
+        if not re.match(pattern, email):
+            flash('email must be a valid CSN staff email address')
+            return render_template('staff_login.html')
+
+        # authentication
+        user = User.query.filter_by(email=email).first()
+        if user and user.password == password and user.is_staff:
+            login_user(user)
+            return redirect(url_for('staff_dashboard'))
+        else:
+            flash('Invalid email or password')
+            return render_template('staff_login.html')
+
+    
+    return render_template('staff_login.html')
+
+# Staff dashboard route
+@app.route('/staff_dashboard', methods=['GET', 'POST'])
+@login_required
+def staff_dashboard():
+    if not current_user.is_staff:
+        flash('Access denied: Staff only area.', 'danger')
+        return redirect(url_for('home'))
+
+    # looks for all registrations and joins with user table to get student info
+    registrations = (
+        db.session.query(Registration, User.FirstName, User.LastName, User.email)
+        .join(User, User.id == Registration.user_id)
+        .order_by(Registration.time_slot, Registration.exam_type)
+        .all()
+    )
+
+    my_registrations = Registration.query.filter_by(user_id=current_user.id)\
+            .order_by(Registration.time_slot).all()
+
+    # counts the number of registrations per time slot
+    slot_counts = {slot: Registration.query.filter_by(time_slot=slot).count()
+                       for slot in TIME_SLOTS}
+
+
+    # gives the staff dashboard the data it needs to display
+    return render_template('staff_dashboard.html',
+                           registrations=registrations,
+                           time_slots_map=TIME_SLOTS_MAP,
+                           my_registrations=my_registrations,
+                           time_slots=TIME_SLOTS,
+                            time_slots_labels=TIME_SLOTS_LABELS,
+                           time_slots_pairs=TIME_SLOTS_PAIRS,
+                           max_capacity=MAX_CAPACITY,
+                           slot_counts=slot_counts)
 
 
 if __name__ == '__main__':
-    app.run(debug = True) 
+    app.run(debug=True)

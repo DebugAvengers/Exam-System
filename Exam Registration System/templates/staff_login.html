@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 2rem auto; text-align: center; font-family: Arial, sans-serif;">
+
+    <h1>Welcome to CSN Exam Registration System</h1>
+    <p>Allowing <loud>CSN Staff</loud> to see all current exam registrations.</p>
+
+    <!-- Login Reminder -->
+    <p style="font-style: italic; color: gray; margin-top: 1rem;">
+        Reminder: Use your official CSN Staff credentials.<br>
+        <strong>Username:</strong> NSHEID@staff.csn.edu<br>
+        <strong>Password:</strong> Your 10-digit NSHE ID number
+    </p>
+
+    <!-- Login Form -->
+    <form method="POST" action="{{ url_for('staff_login') }}" style="margin-top: 1.5rem; text-align: left;">
+        <label for="email">Email</label>
+        <input
+            type="text"
+            id="email"
+            name="email"
+            placeholder="Enter email"
+            required
+            pattern="^[0-9]{10}@staff\.csn\.edu$"
+            title="Enter your NSHE email"
+            style="width: 100%; padding: 8px; margin-bottom: 10px;"
+        >
+
+        <label for="password">Password</label>
+        <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            required
+            pattern="[0-9]{10}"
+            title="Enter your 10-digit NSHE ID"
+            style="width: 100%; padding: 8px; margin-bottom: 15px;"
+        >
+
+        <!-- Buttons -->
+        <div style="text-align: center;">
+            <button type="submit" 
+                style="padding: 10px 20px; background-color: #0066cc; color: white; border-radius: 6px; margin-right: 10px;">
+                Login
+            </button>
+        </div>
+    </form>
+
+</div>
+{% endblock %}
