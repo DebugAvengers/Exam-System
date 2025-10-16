@@ -17,7 +17,7 @@
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </div>
     <div class="container">
-        <h1>📝 Exam Registration</h1>
+        <h1>Exam Registration</h1>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -28,7 +28,7 @@
         {% endwith %}
         
         <div class="info-box">
-            <h3>📊 Your Registration Status</h3>
+            <h3>Your Registration Status</h3>
             <p>Unique exams registered: <strong>{{ current_user.exam_count_check() }} / {{ max_unique_exams }}</strong></p>
             <p>Remaining exam slots: <strong>{{ current_user.remaining_exams() }}</strong></p>
             {% if registered_exams %}
@@ -60,13 +60,13 @@
                 <label for="time_slot">Time Slot:</label>
                 <select id="time_slot" name="time_slot" required>
                     <option value="">-- Select Time --</option>
-                    {% for slot in time_slots %}
-                        <option value="{{ slot }}" {% if slot_counts[slot] >= max_capacity %}disabled{% endif %}>
-                            {{ slot }} 
-                            {% if slot_counts[slot] >= max_capacity %}
+                    {% for value, label in time_slots_pairs %}
+                        <option value="{{ value }}" {% if slot_counts[value] >= max_capacity %}disabled{% endif %}>
+                            {{ label }}
+                            {% if slot_counts[value] >= max_capacity %}
                                 (FULL)
                             {% else %}
-                                ({{ max_capacity - slot_counts[slot] }} spots left)
+                                ({{ max_capacity - slot_counts[value] }} spots left)
                             {% endif %}
                         </option>
                     {% endfor %}
@@ -97,8 +97,8 @@
                     {% for reg in my_registrations %}
                     <tr>
                         <td>{{ reg.exam_type }}</td>
-                        <td>{{ reg.time_slot }}</td>
-                        <td>{{ reg.registered_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>{{ time_slots_map.get(reg.time_slot, reg.time_slot) }}</td>
+                        <td>{{ reg.registered_at.strftime('%m-%d-%Y') }}</td>
                         <td>
                         <form action="{{ url_for('cancel_registration') }}" method = "post">
                             <input type="hidden" name="reg_id" value="{{ reg.id }}">

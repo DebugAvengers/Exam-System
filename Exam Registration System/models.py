@@ -1,11 +1,19 @@
 from __init__ import db
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, time
 
 
 #Exam config
 EXAM_TYPES = ['Mathematics', 'Science', 'English']
-TIME_SLOTS = [f"{h:02d}:00" for h in range(9, 18)]  # 9 AM to 5 PM
+# fills the time slots with times
+TIME_SLOTS = [f"{h:02d}:00" for h in range(9, 18)]  
+# converts to standard time format
+TIME_SLOTS_LABELS = [time(h, 0).strftime('%I:%M %p').lstrip('0') for h in range(9, 18)]
+# pairs the non standard and standard time formats
+# we see the standard format but the backend gets the non standard format
+TIME_SLOTS_PAIRS = list(zip(TIME_SLOTS, TIME_SLOTS_LABELS))
+# needed to display friendly time labels in templates
+TIME_SLOTS_MAP = dict(TIME_SLOTS_PAIRS)
 MAX_CAPACITY = 20
 MAX_UNIQUE_EXAMS = 3
 
