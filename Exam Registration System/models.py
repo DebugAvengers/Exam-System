@@ -4,7 +4,7 @@ from datetime import datetime, time
 
 
 #Exam config
-EXAM_TYPES = ['Mathematics', 'Science', 'English']
+EXAM_TYPES = ['Math', 'Science', 'English']
 # fills the time slots with times
 TIME_SLOTS = [f"{h:02d}:00" for h in range(9, 18)]  
 # converts to standard time format
